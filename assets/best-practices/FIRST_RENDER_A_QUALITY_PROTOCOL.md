@@ -129,6 +129,7 @@ If you've applied the checklist in Stage 2, Stage 3 QA will pass. The optional M
 2. **Video-textured dark card/background, properly scrimmed** — difference between "finished" and "wireframe."
 3. **Literal metaphor visual matched to the slide's concept** — beats generic stock every time.
 4. **Full-bleed scrimmed video divider with minimal 3-tier type** — the divider standard.
+5. **Research-citation card + graphic pull-quote pairing** — every presentation includes 2–3 sources of academic research, each presented as a research highlight card (source line, title, authors/year, key-finding callout, supporting stats) positioned on the left of the slide, paired with a large graphic pull-quote on the right (or a following slide) that isolates the research's main message in bold, oversized editorial type. Vary the card's stat count, highlight color, and quote layout per source so no two research slides look identical.
 
 ---
 
