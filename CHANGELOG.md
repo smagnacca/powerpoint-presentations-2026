@@ -1,5 +1,17 @@
 # Changelog — PowerPoint Presentations 2026
 
+## [1.1] — 2026-07-16
+
+### Added
+- **A-Pattern #5: Research-citation card + graphic pull-quote pairing** — added to `FIRST_RENDER_A_QUALITY_PROTOCOL.md`'s "THE 4 A-PATTERNS" section (now 5). Every deck should include 2–3 academic sources, each as a research highlight card (source line, title, authors/year, key-finding callout, stats) paired with a large graphic pull-quote.
+- Rule refined mid-session: key-finding callouts and pull-quotes must be written in **clear, plain, behavioral language** (concrete verbs: accept, offload, verify, cross-check, question) instead of academic phrasing — formal citation language stays confined to the small-type source line.
+- **Worked example:** `examples/research-slide-demo/` — a single rendered slide demonstrating A-Patterns #1–#5 together (researcher photo w/ ring, scrimmed neural-network-texture card, lightning-bolt metaphor icon, dark kicker/divider bar, citation card + plain-language pull-quote). Includes `build_example.py` (self-contained python-pptx script), the rendered `.pptx`, and a `.png`/`.html` preview.
+
+### Key Learning
+- Real research content (Lee et al., CHI 2025, Microsoft Research × CMU — "The Impact of Generative AI on Critical Thinking") only lands with a business audience once translated out of academic phrasing into plain behavioral statements. This is now a standing rule for all research slides going forward, not a one-off edit.
+
+---
+
 ## [1.0] — 2026-07-12
 
 ### Created
@@ -42,7 +54,7 @@
 
 ---
 
-**Framework Version:** 1.0  
+**Framework Version:** 1.1  
 **Status:** Active — ready for new presentations  
 **Created:** July 12, 2026  
-**Last Updated:** July 12, 2026
+**Last Updated:** July 16, 2026
