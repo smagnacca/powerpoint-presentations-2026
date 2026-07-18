@@ -157,6 +157,76 @@ print("FINAL Built:", len(prs.slides._sldIdLst))
 
 ---
 
+## Click-to-Advance Animations (added 2026-07-18, Novartis Module 3 "Human in the Loop" slide)
+
+python-pptx has **no animation API**. Entrance/build animations must be hand-authored as raw OOXML (`<p:timing>`) and appended directly to the slide's XML element. Use this for any process/step/sequence slide where revealing one element per click aids comprehension (workflow diagrams, decision trees, staged arguments) — **not** for every slide; static slides should stay static.
+
+**Reusable helper** (drop into `theme.py` or import directly):
+
+```python
+from lxml import etree
+
+def add_click_fade(slide_element, click_groups):
+    """click_groups: list of lists of shape_ids. Each inner list = shapes
+    revealed together on one click (e.g. an icon + its card + the arrow
+    pointing into it). Groups fire in list order, one click each."""
+    counter = [2]
+    def next_id():
+        counter[0] += 1
+        return counter[0]
+
+    par_children = []
+    for group in click_groups:
+        effects_xml = []
+        for idx, spid in enumerate(group):
+            node_type = "clickEffect" if idx == 0 else "withEffect"
+            effect_id, set_id, anim_id = next_id(), next_id(), next_id()
+            effects_xml.append(f'''
+              <p:par><p:cTn id="{effect_id}" presetID="2" presetClass="entr" presetSubtype="0" fill="hold" nodeType="{node_type}">
+                <p:stCondLst><p:cond delay="0"/></p:stCondLst>
+                <p:childTnLst>
+                  <p:set><p:cBhvr>
+                    <p:cTn id="{set_id}" dur="1" fill="hold"><p:stCondLst><p:cond delay="0"/></p:stCondLst></p:cTn>
+                    <p:tgtEl><p:spTgt spid="{spid}"/></p:tgtEl>
+                    <p:attrNameLst><p:attrName>style.visibility</p:attrName></p:attrNameLst>
+                  </p:cBhvr><p:to><p:strVal val="visible"/></p:to></p:set>
+                  <p:animEffect transition="in" filter="fade"><p:cBhvr>
+                    <p:cTn id="{anim_id}" dur="500"/><p:tgtEl><p:spTgt spid="{spid}"/></p:tgtEl>
+                  </p:cBhvr></p:animEffect>
+                </p:childTnLst>
+              </p:cTn></p:par>''')
+        outer_id, inner_id = next_id(), next_id()
+        par_children.append(f'''
+          <p:par><p:cTn id="{outer_id}" fill="hold">
+            <p:stCondLst><p:cond delay="indefinite"/></p:stCondLst>
+            <p:childTnLst><p:par><p:cTn id="{inner_id}" fill="hold">
+              <p:stCondLst><p:cond delay="0"/></p:stCondLst>
+              <p:childTnLst>{''.join(effects_xml)}</p:childTnLst>
+            </p:cTn></p:par></p:childTnLst>
+          </p:cTn></p:par>''')
+
+    bld_entries = "".join(f'<p:bldP spid="{spid}" grpId="0"/>' for g in click_groups for spid in g)
+    timing_xml = f'''<p:timing xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main">
+      <p:tnLst><p:par><p:cTn id="1" dur="indefinite" restart="never" nodeType="tmRoot">
+        <p:childTnLst><p:seq concurrent="1" nextAc="seek">
+          <p:cTn id="2" dur="indefinite" nodeType="mainSeq"><p:childTnLst>{''.join(par_children)}</p:childTnLst></p:cTn>
+          <p:prevCondLst><p:cond evt="onPrev" delay="0"><p:tgtEl><p:sldTgt/></p:tgtEl></p:cond></p:prevCondLst>
+          <p:nextCondLst><p:cond evt="onNext" delay="0"><p:tgtEl><p:sldTgt/></p:tgtEl></p:cond></p:nextCondLst>
+        </p:seq></p:childTnLst>
+      </p:cTn></p:par></p:tnLst>
+      <p:bldLst>{bld_entries}</p:bldLst>
+    </p:timing>'''
+    slide_element.append(etree.fromstring(timing_xml))
+```
+
+**Usage:** build the shapes normally, collect each shape's `.shape_id` into per-click groups (e.g. `[icon.shape_id, card.shape_id, arrow.shape_id]`), then call `add_click_fade(slide._element, click_groups)` **after** all shapes for that slide exist. The schema requires the 3-level `par > par(delay=0) > par(clickEffect/withEffect)` nesting shown above — a flatter structure will validate as XML but silently fail to animate correctly in real PowerPoint.
+
+**Testing (mandatory — see Stage 3 in the protocol doc):** this XML is hand-authored, not exported from real PowerPoint, so structural validity does not guarantee runtime behavior. Verify before shipping:
+1. **Structural check (free, always do this):** confirm well-formed XML, zip integrity, and that `bldP` count / `clickEffect` count / `withEffect` count match your click-group shape counts.
+2. **Runtime check (do this before telling the user it works):** LibreOffice PDF export does **NOT** exercise animations — it flattens to final state. Real verification requires opening the file in an app that runs PowerPoint timing: real PowerPoint, Keynote (import), or Google Slides (import). If none is installed locally, upload via a connected browser automation tool and click through, or ask the user to. **Never claim animations work from a static render alone.**
+
+---
+
 ## For the next builder
 
 - `theme.py` is clean and complete (all V5 deltas present).

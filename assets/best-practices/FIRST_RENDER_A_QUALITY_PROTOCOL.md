@@ -55,6 +55,7 @@ Every stat traced to a primary URL; every clip transcribed (never guessed from f
 8. ☐ No **orphaned bold statement** — anchor it in a card or accent bar.
 9. ☐ Dense text is **chunked** with dividers/badges.
 10. ☐ Imagery is **thematically literal** to this slide, not generic stock.
+11. ☐ **Process/step/sequence slides use click-to-advance builds** where it aids comprehension (workflow diagrams, decision trees, staged arguments) — see `1_PPTX_TOOLKIT_REFERENCE.md` § Click-to-Advance Animations. Not every slide needs this; static content stays static.
 
 **Scrim values (critical for readability):**
 - Light content slides (texture bg): `11–14%` scrim (white)
@@ -97,7 +98,20 @@ ls -lh ~/Desktop/Novartis_Module3_Part2_Version4_2026-07-11.pptx   # V4 must sti
 **3. File-size sanity check (guards against file-size blowup from embedding video):**
 Should be ~200–250MB, NOT >500MB.
 
-**4. Archive the approved output to assets/ immediately:**
+**4. Animation testing (any slide with click-to-advance builds — do NOT skip):**
+LibreOffice's PDF export flattens slides to their final static state; it proves nothing about whether animations actually play. Two-tier verification:
+- **Structural (always, $0):** validate XML is well-formed, zip integrity passes, and `bldP`/`clickEffect`/`withEffect` counts in the slide XML match the click-group shape counts you authored.
+```python
+import zipfile
+z = zipfile.ZipFile("deck.pptx")
+assert z.testzip() is None
+xml = z.read([n for n in z.namelist() if "slide" in n and n.endswith(".xml")][-1]).decode()
+print("timing present:", "<p:timing>" in xml, "| bldP:", xml.count("<p:bldP"))
+```
+- **Runtime (required before claiming "done"):** open the actual file in an app that executes PowerPoint timing — real PowerPoint, Keynote, or Google Slides (via upload). If none is installed locally, use a connected browser-automation tool to upload + click through, or hand the file to the user and ask them to. **State explicitly which tier you've completed** — "structurally valid" and "confirmed working" are different claims; never present the former as the latter.
+- **Known blocker:** uploading a real `.pptx` via a Drive/cloud API tool that requires inline base64 content will fail or blow up context — every real pptx carries tens of KB of unavoidable theme/master XML overhead, and base64 tokenizes ~1:1 with characters. Browser-based file-picker uploads also hit a wall: the OS-native file dialog is invisible to browser-automation tools (DOM/page access only). **Fastest reliable path: ask the user to do the one-click upload/open themselves**, then resume automated click-through from inside the now-loaded app.
+
+**5. Archive the approved output to assets/ immediately:**
 ```bash
 cp ~/Desktop/Novartis_Module3_Part2_Version5_2026-07-11.pptx assets/Novartis_Module3_Part2_Version5_FINAL_$(date +%Y-%m-%d).pptx
 ```
@@ -148,6 +162,7 @@ If you've applied the checklist in Stage 2, Stage 3 QA will pass. The optional M
 | FFmpeg `drawtext` missing | Assumed standard FFmpeg feature present | This Mac has no freetype. Use PIL-PNG-overlay path in `compose_clip.py`. |
 | Card-shaped video placements clipping | Forced full-HD 16:9 into mismatched aspect ratio | Render each clip at its target card's actual aspect ratio. |
 | File-size blowup from video embedding | Used `add_bg_video` where motion imperceptible | Use `add_bg_video` only for heroes; use `add_bg_texture` (static poster JPG) elsewhere. |
+| Claimed animations "work" after only a LibreOffice PDF render | PDF export flattens to final state, never executes `<p:timing>` | Structural XML validation is not runtime proof. Open the file in PowerPoint/Keynote/Google Slides (or have the user do it) before claiming success. |
 
 ---
 
@@ -175,6 +190,7 @@ If you've applied the checklist in Stage 2, Stage 3 QA will pass. The optional M
 - **Finishing:** `add_badge()`, `add_circle_photo()`, `add_gradient_card()`, `add_icon_badge()`, `add_bg_video()`, `set_transparency()`
 - **Circle-photo key:** pass true source pixel dims (`src_w`, `src_h`) so square-crop math is correct.
 - **Page-numbering:** mutable counter `PAGE = [0]` + `pg()` helper. Every slide ends with `add_page_num(s, pg())`.
+- **Animations:** `add_click_fade(slide._element, click_groups)` for click-to-advance builds on process/step slides. See toolkit reference for the full hand-authored OOXML `<p:timing>` pattern and the mandatory two-tier (structural + runtime) testing protocol.
 
 ---
 

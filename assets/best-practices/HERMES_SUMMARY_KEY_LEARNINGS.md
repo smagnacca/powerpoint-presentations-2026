@@ -125,6 +125,17 @@ ls -la module3/build_v5/{imgs,clips,posters}/ | wc -l
 
 ---
 
+## Animations (added 2026-07-18)
+
+**New standing rule:** every new presentation build should include click-to-advance animations on process/step/sequence slides where they aid comprehension (not on every slide — static content stays static), and animations must be **tested**, not just structurally validated, before calling the deck done.
+
+- python-pptx has no animation API. Build entrance/click animations as hand-authored OOXML `<p:timing>` — full reusable `add_click_fade()` helper in `1_PPTX_TOOLKIT_REFERENCE.md`.
+- **Structural validation ≠ runtime proof.** LibreOffice PDF export (the usual free/local QA render) flattens slides to their final state and never executes animation timing. Checking XML well-formedness and shape-ID/build-list counts confirms the file *should* work, not that it *does*.
+- **Runtime test before shipping:** open the actual file in PowerPoint, Keynote, or Google Slides and click through it. If none of those apps is installed locally, use browser automation to upload + test, or — faster and more reliable — ask the user to do the one-click upload/open themselves, since OS-native file-picker dialogs are invisible to browser-automation DOM tools, and routing a real `.pptx`'s bytes through an LLM's context via base64 for an API-based upload blows past context limits (every real pptx carries unavoidable theme/master XML overhead).
+- Say explicitly which tier of verification you've completed. "Structurally valid" and "confirmed working" are different claims — never present the former as the latter.
+
+---
+
 ## Asset Sourcing Decision Tree
 
 1. **Free stock images (Pexels)?** → Use first

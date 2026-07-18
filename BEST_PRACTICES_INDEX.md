@@ -1,8 +1,10 @@
 # Best Practices Index — PowerPoint Presentations 2026
 
-**Last Updated:** July 12, 2026
+**Last Updated:** July 18, 2026
 
 This file serves as a master index and quick-reference for all best practices, protocols, and supporting documents.
+
+**2026-07-18 addition:** Click-to-advance animations are now a standing part of the build checklist (#11) and QA stage (Stage 3.4) — include on process/step/sequence slides where they aid comprehension, and test with the mandatory two-tier protocol (structural validation + runtime verification in PowerPoint/Keynote/Google Slides). See `1_PPTX_TOOLKIT_REFERENCE.md` § Click-to-Advance Animations for the reusable `add_click_fade()` helper, sourced from the Novartis Module 3 "Human in the Loop" slide build.
 
 ---
 

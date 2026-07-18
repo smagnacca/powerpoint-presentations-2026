@@ -1,5 +1,19 @@
 # Changelog — PowerPoint Presentations 2026
 
+## [1.2] — 2026-07-18
+
+### Added
+- **Build-time checklist item #11 + QA Stage 3.4: click-to-advance animations.** Standing rule going forward — process/step/sequence slides (workflow diagrams, decision trees, staged arguments) should include click-to-advance builds where they aid comprehension; static slides stay static.
+- **`add_click_fade()` helper** in `1_PPTX_TOOLKIT_REFERENCE.md` — reusable hand-authored OOXML `<p:timing>` pattern (python-pptx has no animation API). Sourced from the Novartis Module 3 "Human in the Loop" slide build (2026-07-18).
+- **Mandatory two-tier animation testing protocol:** (1) structural validation (XML well-formedness, zip integrity, bldP/clickEffect/withEffect counts) — free, always do this; (2) runtime verification by actually opening the file in PowerPoint/Keynote/Google Slides and clicking through — required before claiming animations "work." A LibreOffice PDF render (the usual free QA step) flattens slides to their final state and proves nothing about animation behavior.
+- **New anti-pattern (12th):** claiming animations work from a static PDF render alone.
+- **Documented blocker:** uploading a real `.pptx` for browser-based runtime testing hits two dead ends — Drive/cloud API tools need inline base64 content (blows past context limits; every real pptx carries unavoidable theme/master XML overhead), and OS-native file-picker dialogs are invisible to browser-automation DOM tools. Fastest reliable path: have the user do the one-click upload/open themselves, then resume automated click-through from inside the loaded app.
+
+### Key Learning
+- A file can be structurally valid XML and still never be runtime-verified — those are different claims, and the gap matters most for animations because the standard free QA render (LibreOffice → PDF) can't exercise them at all. State explicitly which tier of verification was actually completed.
+
+---
+
 ## [1.1] — 2026-07-16
 
 ### Added
