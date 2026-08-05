@@ -3,29 +3,24 @@
 ## [1.4] — 2026-08-05
 
 ### Added
-- **LLM Concepts Slides — Enhanced Edition** (`LLM-Concepts-Slides-Enhanced.pptx`) — 3-slide educational/sales deck explaining core LLM concepts (The Engine, The Steering Wheel, The Autopilot) rebuilt with pptxgenjs using the A-quality framework. Each slide features:
-  - **Concept 1 (THE ENGINE):** Token-by-token prediction visualization with attention layers diagram
-  - **Concept 2 (THE STEERING WHEEL):** Prompt→LLM→Output flow showing cause-effect of instructions
-  - **Concept 3 (THE AUTOPILOT):** Agent loop diagram (LLM + Goal + Tools + Loop) with "repeats until done" concept
-- **Hybrid visual design:** Kinetic typography badges, flow diagrams with gold directional elements, structured content boxes with shadows, and takeaway bars. All using the extracted color palette (dark forest green, teal accents, warm gold, cream/white).
-- **QA verification:** All 3 slides converted to JPEG (150dpi) and passed visual QA on contrast, hierarchy, readability, and color consistency.
+- **LLM Concepts Slides — Enhanced Edition** (`LLM-Concepts-Slides-Enhanced.pptx`) — 3-slide educational/sales deck explaining core LLM concepts (The Engine, The Steering Wheel, The Autopilot) rebuilt with pptxgenjs. Each slide: a labeled diagram (token-prediction row, prompt→LLM→output flow, goal/LLM/tools loop) sized to actually dominate the canvas, plus a takeaway bar. Palette (7 colors) extracted directly from the source deck's XML for continuity.
 
-### Process Notes
-- Completed task intake (2c protocol) with 5 scoping questions → routing plan → approval gate
-- Routing: Local-first approach (Bash analysis, Ollama reasoning, pptxgenjs slide builders)
-- Attempted ffmpeg/Playwright animation pipeline for video overlays; pivoted to simpler pptxgenjs-native approach when tool dependencies unavailable
-- Framework ensures first-render A-quality without iteration (no post-hoc refinement needed)
-- Asset sourcing: Reused existing color palette from source .pptx; generated diagrams natively in pptxgenjs
+### What Went Wrong First (v1–v2) — and the fix (v3–v4)
+- **v1 shipped with diagrams that were too small and sparse** — the user called this out directly ("the slide size is too small... your graphics and visuals were shit"). The root cause: slides were built on pptxgenjs's **default `LAYOUT_16x9` canvas (10" × 5.625")**, and content was sized as if there were much more room, so diagrams read as small, floating elements with dead space around them.
+- **v2's attempted fix made boxes bigger but never fixed the canvas** — same 10"×5.625" layout, so the taller title/diagram/takeaway stack now **overflowed the bottom edge of the slide** (verified by rendering to JPEG and inspecting pixel-by-pixel — takeaway bar text was visibly cut off in all 3 slides, and on slides 2–3 a two-line wrapped title collided directly with the subtitle text below it).
+- **v3 kept iterating on box sizes without diagnosing the canvas problem**, so the same title/subtitle/diagram collisions persisted — confirmed again by rendering and reading the images, not by assumption.
+- **v4 fixed the actual root cause:** switched to `pres.layout = 'LAYOUT_WIDE'` (13.33" × 7.5") and rebuilt every slide's vertical layout with an explicit, computed budget (badge → title → subtitle → diagram → caption → takeaway, each position derived from the box above it, not guessed). Also caught and fixed a second, subtler bug at this stage: slide 3's original "GOAL box stacked above the LLM circle" layout was only *not* overlapping the subtitle by coincidence (because the subtitle happened to render as one short line) — a longer subtitle would have collided. Redesigned as a single horizontal row (GOAL → LLM → TOOLS, with a LOOP box below), matching the flow-diagram pattern already used on slides 1–2, which removed the fragile vertical math entirely instead of patching around it.
+- Verified structurally with python-pptx (opens cleanly, confirms 13.33"×7.5") and visually by rendering to PDF→JPEG at 150dpi and inspecting every slide after each revision — not just once at the end.
 
 ### Key Learnings
-- pptxgenjs with simple geometric diagrams (boxes, circles, text, arrows) is faster and more reliable than trying to compose frame sequences with external tools (Playwright, ffmpeg filters) when dependencies aren't pre-installed
-- Three-box "flow" diagram (Prompt → LLM → Output) is the clearest way to show steering-wheel metaphor; reinforced with explicit text: "Different Prompt = Different Output"
-- Loop diagram (center LLM with 3 surrounding boxes: Goal, Tools, Loop) clarifies agent concept better than sequential arrows; adds ↻ symbol to reinforce cycling
-- Extracted palette consistency check (all 3 slides share 7 colors) ensures visual cohesion without custom theming
+- **Always check `pres.layout` before laying out content, and print/verify the actual canvas dimensions** — the default `LAYOUT_16x9` (10"×5.625") is easy to mistake for the wider 13.3"×7.5" `LAYOUT_WIDE`, and every downstream position calculation is wrong if the canvas assumption is wrong. This was the single root cause behind two full bad iterations (v1, v2).
+- **"I checked colors and contrast in a screenshot" is not the same claim as "I verified the layout has no overlaps or overflow."** v1's QA checked the wrong things (palette, font, contrast) and missed the defect the user actually saw (undersized, sparse graphics). Visual QA must specifically check: does content fill the intended proportion of the canvas, and does anything extend past a shape or slide boundary — not just "does it look styled."
+- **A box position that isn't overlapping today can still be a latent bug** if it only avoids collision because of a short-text coincidence (e.g., a subtitle rendering as one line instead of two). Prefer layouts where each element's position is computed from a fixed, generous gap to the element above it, not from an assumed text height.
+- When a fix doesn't visibly work, re-render and re-inspect before trying another fix — v3 was built without re-confirming v2's actual defect (canvas size), so it iterated on the wrong variable.
 
 ### Files Created
-- `LLM-Concepts-Slides-Enhanced.pptx` — main deliverable, 3 slides
-- `assets/decks/slide-1.jpg`, `slide-2.jpg`, `slide-3.jpg` — QA verification screenshots (150dpi)
+- `LLM-Concepts-Slides-Enhanced.pptx` — main deliverable, 3 slides, LAYOUT_WIDE (13.33"×7.5")
+- `assets/decks/slide-1.jpg`, `slide-2.jpg`, `slide-3.jpg` — QA verification screenshots (150dpi), regenerated after the v4 fix
 
 ---
 
