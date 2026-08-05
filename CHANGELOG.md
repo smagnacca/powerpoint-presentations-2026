@@ -1,5 +1,50 @@
 # Changelog — PowerPoint Presentations 2026
 
+## [1.4] — 2026-08-05
+
+### Added
+- **LLM Concepts Slides — Enhanced Edition** (`LLM-Concepts-Slides-Enhanced.pptx`) — 3-slide educational/sales deck explaining core LLM concepts (The Engine, The Steering Wheel, The Autopilot) rebuilt with pptxgenjs using the A-quality framework. Each slide features:
+  - **Concept 1 (THE ENGINE):** Token-by-token prediction visualization with attention layers diagram
+  - **Concept 2 (THE STEERING WHEEL):** Prompt→LLM→Output flow showing cause-effect of instructions
+  - **Concept 3 (THE AUTOPILOT):** Agent loop diagram (LLM + Goal + Tools + Loop) with "repeats until done" concept
+- **Hybrid visual design:** Kinetic typography badges, flow diagrams with gold directional elements, structured content boxes with shadows, and takeaway bars. All using the extracted color palette (dark forest green, teal accents, warm gold, cream/white).
+- **QA verification:** All 3 slides converted to JPEG (150dpi) and passed visual QA on contrast, hierarchy, readability, and color consistency.
+
+### Process Notes
+- Completed task intake (2c protocol) with 5 scoping questions → routing plan → approval gate
+- Routing: Local-first approach (Bash analysis, Ollama reasoning, pptxgenjs slide builders)
+- Attempted ffmpeg/Playwright animation pipeline for video overlays; pivoted to simpler pptxgenjs-native approach when tool dependencies unavailable
+- Framework ensures first-render A-quality without iteration (no post-hoc refinement needed)
+- Asset sourcing: Reused existing color palette from source .pptx; generated diagrams natively in pptxgenjs
+
+### Key Learnings
+- pptxgenjs with simple geometric diagrams (boxes, circles, text, arrows) is faster and more reliable than trying to compose frame sequences with external tools (Playwright, ffmpeg filters) when dependencies aren't pre-installed
+- Three-box "flow" diagram (Prompt → LLM → Output) is the clearest way to show steering-wheel metaphor; reinforced with explicit text: "Different Prompt = Different Output"
+- Loop diagram (center LLM with 3 surrounding boxes: Goal, Tools, Loop) clarifies agent concept better than sequential arrows; adds ↻ symbol to reinforce cycling
+- Extracted palette consistency check (all 3 slides share 7 colors) ensures visual cohesion without custom theming
+
+### Files Created
+- `LLM-Concepts-Slides-Enhanced.pptx` — main deliverable, 3 slides
+- `assets/decks/slide-1.jpg`, `slide-2.jpg`, `slide-3.jpg` — QA verification screenshots (150dpi)
+
+---
+
+## [1.3] — 2026-08-04
+
+### Added
+- **New deck: "ACE-AI Case Study"** (`ACE-Score-Full-Deck.pptx` / saved as `assets/decks/ACE-AI-Case-Study.pptx` + `.pdf`) — 6-slide deck on the AI-Cirrhosis-ECG (ACE) score study (Ma et al.), built with pptxgenjs rather than python-pptx. Structure: (1) medical/cost burden, (2) why early detection matters, (3) ACE score intro with AUC explainer answering "so what?", (4) validation evidence across 890 patients, (5) crisis-vs-prevention cost impact, (6) AI+clinical-judgment synthesis with full APA reference list.
+- **Video-embedded animated charts** — new capability for this framework. Built a small Playwright + ffmpeg pipeline (`anim-build/templates.js`, `anim-build/record.js`) that renders HTML/CSS/JS count-up numbers, growing bar charts, and SVG line-draw (ROC curve) animations, records them via `context.recordVideo`, and encodes to h264 mp4 for embedding as click-to-play video via pptxgenjs `addMedia`. Real vs. estimated data visually distinguished with a diagonal hatch pattern + dashed border + gold "ILLUSTRATIVE"/"EST." badge, not text alone.
+- **Real Pexels photography** used for hero background and 3 closing "pillar" photos (quality of life, longevity, cost savings) instead of icons/clip art, each color-graded to match the deck palette — extracted a 4K frame from an existing licensed B-roll clip (`ai-16-plexus-abstract-geometric-lines.mp4`) for the hero.
+- **Distributed to 3 other project folders** for reuse as a case-study reference: Novartis-Emeritus-Sales-Project, VIDEO-PRODUCTION-MASTER, Babson Summer Course (each under `assets/ACE-AI-Case-Study/`).
+
+### Key Learnings
+- Playwright's `recordVideo` flattens CSS `background: transparent` to opaque **white** in the output video, not true alpha — any HTML animation template destined for video recording needs an explicit opaque background color, or light text/elements meant for a dark card become invisible.
+- pptxgenjs `addMedia`'s `cover` (poster image) option requires a base64 data URI, not a file path — extracting a real near-final animation frame via ffmpeg and passing it as `cover` looks far better than the library's default gray play-button box.
+- Hand-authoring OOXML `<p:timing>` for embedded-video autoplay/loop was investigated and deliberately rejected for this deck: real corruption risk from hand-authored XML, and no way to verify actual playback behavior without real PowerPoint (LibreOffice can't render video timing). Shipped standard click-to-play instead — a communicated trade-off, not an oversight.
+- Two rounds of independent red-team subagent review (fresh context, no build knowledge) caught real defects a self-review missed: two unsourced "problem" stats that had crept in as generic framing text, inconsistent red/green color semantics across slides, and illustrative-vs-real data that wasn't visually distinct enough at a skim. All fixed before delivery.
+
+---
+
 ## [1.2] — 2026-07-18
 
 ### Added
