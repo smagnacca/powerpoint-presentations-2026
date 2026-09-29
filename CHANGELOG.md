@@ -1,5 +1,14 @@
 # Changelog — PowerPoint Presentations 2026
 
+## [1.5] — 2026-09-29
+
+### Added
+- **Claude Desktop Presentation and Overview** (`assets/Claude Desktop Preserntation and Overview.pptx`) — 28-slide Google Slides/PPTX deck rebuilt from the supplied Claude Desktop Deep Dive PDF, with Babson cover/footer branding and presenter credit removed, the AI adoption graphic added, and two Drive-backed video slides inserted at the relevant AI safety/alignment points.
+
+### Verification
+- Rendered the local PPTX to PDF and inspected all 28 slides visually.
+- Verified the Google Slides copy has 28 slides and native Drive-backed video objects on the two inserted media slides.
+
 ## [1.4] — 2026-08-05
 
 ### Added
@@ -124,3 +133,8 @@ v4 passed every technical QA check (correct canvas, zero overlaps, on-palette, g
 **Status:** Active — ready for new presentations  
 **Created:** July 12, 2026  
 **Last Updated:** July 16, 2026
+
+---
+
+## 2026-08-13 — Novartis Deck Design Best Practices Indexed
+Scott flagged the Novartis Emeritus Module 3 Part 2 (Version 5) Keynote deck as a design exemplar. Ran a full 33-slide vision analysis (free OpenRouter models) and synthesized recurring patterns: abstract gradient/network b-roll for AI/tech concepts, headshots reserved for real people only, consistent semantic color-coding, dark/light pacing alternation, minimal flat icons. Full report: `~/ClaudeVault/master-vault/00-Best-Practices/Novartis-Module3-Part2/BEST-PRACTICES-Novartis-Module3-Part2.md`. Memory entry: `reference_novartis_deck_best_practices.md`.
