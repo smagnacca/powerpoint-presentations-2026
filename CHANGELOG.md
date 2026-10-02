@@ -138,3 +138,8 @@ v4 passed every technical QA check (correct canvas, zero overlaps, on-palette, g
 
 ## 2026-08-13 — Novartis Deck Design Best Practices Indexed
 Scott flagged the Novartis Emeritus Module 3 Part 2 (Version 5) Keynote deck as a design exemplar. Ran a full 33-slide vision analysis (free OpenRouter models) and synthesized recurring patterns: abstract gradient/network b-roll for AI/tech concepts, headshots reserved for real people only, consistent semantic color-coding, dark/light pacing alternation, minimal flat icons. Full report: `~/ClaudeVault/master-vault/00-Best-Practices/Novartis-Module3-Part2/BEST-PRACTICES-Novartis-Module3-Part2.md`. Memory entry: `reference_novartis_deck_best_practices.md`.
+
+## 2026-10-01 — Collaborative AI Training Research Cards
+- Added the verified two-card employee/manager research-card set in `assets/research-cards/collaborative-ai-training/`.
+- Final reference-style source is the two-slide v7 PowerPoint/PDF; statistics and citations were checked against Noy & Zhang (Science), Brynjolfsson, Li & Raymond (NBER), and McKinsey's 2024 AI report.
+- Preserved the earlier exploratory card versions for provenance.
